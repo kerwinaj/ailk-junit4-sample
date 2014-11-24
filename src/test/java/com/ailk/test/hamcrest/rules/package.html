@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Rules Sample</title>
+</head>
+<body>
+<pre>
+使用Rule的规则：
+	1、声明为测试类的成员变量，必须声明为public，可以为static，但不能为final
+	2、使用@Rule注解
+</pre>
+<H3>Rule 类层次图（4.9+ version)：</H3>
+<div>
+	<img src="Rules.png" />
+</div>
+<div>
+<pre>
+说明：
+	1、TestWatchman从JUnit 4.7版本后引进，实现了MethodRule接口，不过从JUnit 4.9版本之后MethodRule已经过时
+	2、从JUnit 4.9版本后，TestWatcher 取代 TestWatchman. 他直接实现了TestRule接口, 而不是MethodRule接口
+</pre>
+</div>
+<div>
+<pre>
+版本变化：
+	ver 4.11:
+		1、升级Hamcrest 到1.3版本，可以使用过多的Matchers，对使用assertThat带来更好的体验
+		2、对参数化测试（Parameterized Tests）的@Parameters注解提供了name属性，name属性允许提供占位符，在运行时指定替换
+			a.{index}：当前参数的索引
+			b.{0}, {1},...第一，第二...个参数
+		3、增加了@FixMethodOrder注解，用于执行测试用例时指定执行顺序。常见的
+		4、Rules的改进
+			a.MethodRule 不再过时（deprecated）
+			b.@Rule和@ClassRule都可以用在一个返回TestRule的测试方法中
+			c.在测试失败后，ExpectedException 总会打印实际异常的堆栈信息
+			d.TemporaryFolder可以指定父Foler，newFile/newFolder方法不会失败即使这个文件/目录未创建成功
+			e.TestWatcher 包含了一个模板方法skipped，如果因为一个assumption失败了导致测试方法未执行，这个方法会调用。
+		5、Assert和Assume的改进
+			a.Assert添加了assertNotEquals 方法
+			b.添加了assertEquals的重载方法，用来检测给定一个精度的2个float是否相等
+			c.大部分Assume的方法都允许添加一个自定义消息
+			
+	ver 4.10:
+		1、运行RuleChain的TestRules排序
+		2、TemporaryFolder
+			a.TemporaryFolder#newFolder(String... folderNames)用来递归创建较深的Foler
+			b.TemporaryFolder#newFile()用来创建随机命名的文件，TemporaryFolder#newFolder() 用来创建随机命名的文件夹
+		3、Theories
+		4、修正bug:
+			a.Rules实现
+				I .当应用Rule失败时，TemporaryFolder 不应该在当前工作目录创建文件
+				II.发生AssumptionViolatedExceptions 异常时，TestWatcher 和 TestWatchman 不应该调用Fail
+			b.Parameterized test应该可以使用@Category注解
+			c.AssertionFailedError 不应该调用带有null参数的父类的构造方法
+		5.小的变动：
+			a.Description, Result and Failure实现了Serializable 接口
+			b.FailOnTimeout 可以重用
+			c.提供了新的ErrorCollector.checkThat方法重载，可以使你调用方法时指定一个Reason
+			
+		ver 4.9:
+			1、添加了@ClassRule注解，添加到类的static字段，影响整个类的执行。例如在一个测试套件中，在所有测试方法运行之前连接服务器，所有方法结束后关闭连接
+			2、@Rule 和 @ClassRule 都实现了TestRule接口，老的MethodRule依然可以用，不过已经过时，TestWatchman 过时，被TestWatcher替换
+			3、修正Bug:
+				a.assumeTrue,对于预期的异常，不能正常工作
+				b.ParentRunner过滤多余于1次
+				c.protected BlockJUnit4ClassRunner#rules被删除了
+				d.要依赖于java6
+				e.当使用assertEquals时，不正确的错误消息比较
+				f.ParentRunner假设getChildren()返回一个可以改变的列表
+	</pre>
+</div>
+	
+</body>
+</html>
